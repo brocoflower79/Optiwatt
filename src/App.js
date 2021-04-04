@@ -15,6 +15,7 @@ import {
 
 import createTheme from "./theme";
 import Routes from "./routes/Routes";
+import "./assets/fonts/nunito-cufonfonts-webfont/style.css";
 
 const jss = create({
   ...jssPreset(),

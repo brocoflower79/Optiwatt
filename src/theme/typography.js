@@ -1,5 +1,6 @@
 const typography = {
   fontFamily: [
+    "Nunito",
     "Inter",
     "-apple-system",
     "BlinkMacSystemFont",

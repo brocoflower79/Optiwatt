@@ -49,6 +49,7 @@ import Pagination from "../pages/components/Pagination";
 import Progress from "../pages/components/Progress";
 import Snackbars from "../pages/components/Snackbars";
 import Tooltips from "../pages/components/Tooltips";
+import SelectUtility from "../pages/components/SelectUtility";
 
 // Dashboards components
 const Default = async(() => import("../pages/dashboards/Default"));
@@ -332,6 +333,11 @@ const componentsRoutes = {
       path: "/components/tooltips",
       name: "Tooltips",
       component: Tooltips,
+    },
+    {
+      path: "/components/selectutility",
+      name: "SelectUtility",
+      component: SelectUtility,
     },
   ],
   component: null,
