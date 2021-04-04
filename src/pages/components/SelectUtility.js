@@ -12,8 +12,12 @@ import {
   Card as MuiCard,
   Divider as MuiDivider,
   Typography,
+  FormControl as MuiFormControl,
   Button as MuiButton,
   Box,
+  MenuItem,
+  InputLabel,
+  Select as MuiSelect,
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
@@ -26,7 +30,21 @@ import leap from "../../assets/images/leap.png";
 const Card = styled(MuiCard)(spacing);
 
 const CardContent = styled(MuiCardContent)`
-  padding: 24px 48px 32px 48px;
+  ${(props) => props.theme.breakpoints.up("xs")} {
+    padding: 24px 8px 32px 8px;
+  }
+  ${(props) => props.theme.breakpoints.up("sm")} {
+    padding: 24px 24px 32px 24px;
+  }
+  ${(props) => props.theme.breakpoints.up("md")} {
+    padding: 24px 32px 32px 32px;
+  }
+  ${(props) => props.theme.breakpoints.up("lg")} {
+    padding: 24px 48px 32px 48px;
+  }
+  ${(props) => props.theme.breakpoints.up("xl")} {
+    padding: 24px 48px 32px 48px;
+  }
 `;
 
 const Spacer = styled.div(spacing);
@@ -36,6 +54,14 @@ const Divider = styled(MuiDivider)(spacing);
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Button = styled(MuiButton)(spacing);
+
+const FormControlSpacing = styled(MuiFormControl)(spacing);
+
+const Select = styled(MuiSelect)(spacing);
+
+const FormControl = styled(FormControlSpacing)`
+  min-width: 148px;
+`;
 
 const supportText = [
   "Help reduce CO2 and grid blackouts by delaying charging during high electricity demand.",
@@ -72,9 +98,9 @@ const VectorIcon = styled(Vector)`
 
 const CheckIcon = styled(Check)`
   margin-right: ${(props) => props.theme.spacing(2)}px;
-  margin-top: -2px;
-  width: 12px;
-  height: 12px;
+  margin-top: 16px;
+  width: 20px;
+  height: 20px;
   vertical-align: middle;
   display: inline;
 `;
@@ -86,11 +112,22 @@ const Leap = styled.img`
 `;
 
 const UtilityContainer = styled.div`
-  display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 31px;
   margin-bottom: 28px;
+  ${(props) => props.theme.breakpoints.down("xs")} {
+    @media screen and (max-width: 360px) {
+      display: block;
+      text-align: center;
+    }
+    @media screen and (min-width: 360px) {
+      display: flex;
+    }
+  }
+  ${(props) => props.theme.breakpoints.up("sm")} {
+    display: flex;
+  }
 `;
 
 const UtilityItem = styled.div`
@@ -145,11 +182,20 @@ const StyledTypography = styled(Typography)`
   marign-bottom: 12px;
 `;
 
-const StyledSummaryContainerTypography = styled.ul`
+const StyledSummaryContainer = styled.ul`
   padding-left: 16px;
 `;
 
+const StyledSelectWrapper = styled(FormControl)`
+  width: 100%;
+`;
+
 const SelectUitiltyProvider = () => {
+  const [utility, setUtility] = React.useState("");
+
+  const handleChange = (event) => {
+    setUtility(event.target.value);
+  };
   return (
     <Card mb={6}>
       <CardContent>
@@ -160,12 +206,22 @@ const SelectUitiltyProvider = () => {
           </StyledSummaryTypography>
         </Box>
         <Box display="flex" alignItems="center">
-          <CheckIcon />
-          <Typography variant="body2" gutterBottom>
-            SDG&E
-          </Typography>
+          {utility !== "" && <CheckIcon />}
+          <StyledSelectWrapper>
+            <InputLabel id="demo-simple-select-label">Utility</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={utility}
+              onChange={handleChange}
+            >
+              <MenuItem value={10}>SDGE1</MenuItem>
+              <MenuItem value={20}>SDGE2</MenuItem>
+              <MenuItem value={30}>SDGE3</MenuItem>
+            </Select>
+          </StyledSelectWrapper>
         </Box>
-        <Divider />
+        {/* <Divider /> */}
         <UtilityContainer>
           <UtilityItem>
             <LogoIcon />
@@ -178,7 +234,7 @@ const SelectUitiltyProvider = () => {
         </UtilityContainer>
         <Box pl={7.75} pr={7.75}>
           <StyledTitleTypography>Support Your Local Grid</StyledTitleTypography>
-          <StyledSummaryContainerTypography>
+          <StyledSummaryContainer>
             {supportText.map((text, index) => (
               <li key={index}>
                 <StyledSummaryTypography variant="body2" gutterBottom>
@@ -186,7 +242,7 @@ const SelectUitiltyProvider = () => {
                 </StyledSummaryTypography>
               </li>
             ))}
-          </StyledSummaryContainerTypography>
+          </StyledSummaryContainer>
           <ButtonContainer>
             <StyledAuthorizeButton>Authorize</StyledAuthorizeButton>
             <StyledSkipForLaterButton>Skip for later</StyledSkipForLaterButton>
