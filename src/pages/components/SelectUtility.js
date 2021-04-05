@@ -196,6 +196,7 @@ const StyledTitleTypography = styled(Typography)`
   color: #343434;
   font-weight: bold;
   margin-bottom: 8px;
+  text-align: center;
 `;
 
 const StyledSummaryTypography = styled(Typography)`
@@ -222,7 +223,17 @@ const StyledSelectWrapper = styled(FormControl)`
 
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
-    min-height: 700px;
+    ${(props) => props.theme.breakpoints.down("xs")} {
+      @media screen and (max-width: 360px) {
+        min-height: 250px;
+      }
+      @media screen and (min-width: 360px) {
+        min-height: 400px;
+      }
+    }
+    ${(props) => props.theme.breakpoints.up("sm")} {
+      min-height: 700px;
+    }
   }
 `;
 
@@ -351,7 +362,7 @@ const SelectUitiltyProvider = () => {
           <UtilityContainer>
             <SdgeIcon />
           </UtilityContainer>
-          <StyledTitleTypography id="alert-dialog-description">
+          <StyledTitleTypography>
             SDG&E Utility Webpage / Authorization Flow
           </StyledTitleTypography>
           <StyledAllowAuthorizeButton
