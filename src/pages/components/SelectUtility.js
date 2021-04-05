@@ -1,11 +1,14 @@
 import React from "react";
 import styled from "styled-components/macro";
+import { keyframes } from "styled-components";
 import { NavLink } from "react-router-dom";
 
 import { Helmet } from "react-helmet-async";
 
 import {
   CardContent as MuiCardContent,
+  Dialog,
+  DialogContent,
   Grid,
   Link,
   Breadcrumbs as MuiBreadcrumbs,
@@ -87,6 +90,21 @@ const LogoIcon = styled(Logo)`
   display: inline;
 `;
 
+const vectorAnimation = keyframes`
+ 0% {
+   filter: drop-shadow(0px 0px 0px #3a9bfb);
+   fill: #3a9bfb;
+ }
+ 50% {
+   filter: drop-shadow(0px 0px 6px #3a9bfb);
+   fill: #3a9bfb;
+ }
+ 100% {
+   filter: drop-shadow(0px 0px 0px #3a9bfb);
+   fill: #3a9bfb;
+ }
+`;
+
 const VectorIcon = styled(Vector)`
   margin-left: 10px;
   margin-right: 10px;
@@ -94,6 +112,9 @@ const VectorIcon = styled(Vector)`
   height: 6px;
   vertical-align: middle;
   display: inline;
+  animation-name: ${vectorAnimation};
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
 `;
 
 const CheckIcon = styled(Check)`
@@ -154,6 +175,15 @@ const StyledAuthorizeButton = styled(Button)`
   color: #ffffff;
 `;
 
+const StyledAllowAuthorizeButton = styled(Button)`
+  background-color: #3a9bfb;
+  border-radius: 20px;
+  width: 128px;
+  font-size: 10px;
+  margin-right: 16px;
+  color: #ffffff;
+`;
+
 const StyledSkipForLaterButton = styled(Button)`
   margin-right: 16px;
   color: #af4bfb;
@@ -190,8 +220,43 @@ const StyledSelectWrapper = styled(FormControl)`
   width: 100%;
 `;
 
+const StyledDialog = styled(Dialog)`
+  .MuiPaper-root {
+    min-height: 700px;
+  }
+`;
+
+const StyledDialogContent = styled(DialogContent)`
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const StyledAuthorized = styled.div`
+  text-align: center;
+  margin-top: 32px;
+`;
+
 const SelectUitiltyProvider = () => {
   const [utility, setUtility] = React.useState("");
+  const [openAuthorize, setOpenAuthorize] = React.useState(false);
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [authorized, setAuthorized] = React.useState(false);
+
+  const handleOpenAuthorizeDialog = () => {
+    setOpenAuthorize(true);
+  };
+
+  const handleOpenSuccessDialog = () => {
+    setOpenAuthorize(false);
+    setOpenSuccess(true);
+  };
+
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccess(false);
+    setAuthorized(true);
+  };
 
   const handleChange = (event) => {
     setUtility(event.target.value);
@@ -221,7 +286,16 @@ const SelectUitiltyProvider = () => {
             </Select>
           </StyledSelectWrapper>
         </Box>
-        {/* <Divider /> */}
+        {authorized && (
+          <StyledAuthorized>
+            <StyledTitleTypography>
+              Thanks for Supporting the Local Grid!
+            </StyledTitleTypography>
+            <StyledSummaryTypography>
+              Successfully linked Optiwatt with SDG&E.
+            </StyledSummaryTypography>
+          </StyledAuthorized>
+        )}
         <UtilityContainer>
           <UtilityItem>
             <LogoIcon />
@@ -232,28 +306,88 @@ const SelectUitiltyProvider = () => {
             <Leap src={leap} alt="English" />
           </UtilityItem>
         </UtilityContainer>
-        <Box pl={7.75} pr={7.75}>
-          <StyledTitleTypography>Support Your Local Grid</StyledTitleTypography>
-          <StyledSummaryContainer>
-            {supportText.map((text, index) => (
-              <li key={index}>
-                <StyledSummaryTypography variant="body2" gutterBottom>
-                  {text}
-                </StyledSummaryTypography>
-              </li>
-            ))}
-          </StyledSummaryContainer>
-          <ButtonContainer>
-            <StyledAuthorizeButton>Authorize</StyledAuthorizeButton>
-            <StyledSkipForLaterButton>Skip for later</StyledSkipForLaterButton>
-          </ButtonContainer>
-          <StyledTypography variant="body2" gutterBottom>
-            By clicking Authorize, Leap, our 3rd party provider, will connect to
-            your ultility company meter and enable Optiwatt to support the grid.
-          </StyledTypography>
-          <Spacer mb={4} />
-        </Box>
+        {!authorized && (
+          <Box pl={7.75} pr={7.75}>
+            <StyledTitleTypography>
+              Support Your Local Grid
+            </StyledTitleTypography>
+            <StyledSummaryContainer>
+              {supportText.map((text, index) => (
+                <li key={index}>
+                  <StyledSummaryTypography variant="body2" gutterBottom>
+                    {text}
+                  </StyledSummaryTypography>
+                </li>
+              ))}
+            </StyledSummaryContainer>
+            <ButtonContainer>
+              <StyledAuthorizeButton
+                onClick={handleOpenAuthorizeDialog}
+                variant="contained"
+              >
+                Authorize
+              </StyledAuthorizeButton>
+              <StyledSkipForLaterButton>
+                Skip for later
+              </StyledSkipForLaterButton>
+            </ButtonContainer>
+            <StyledTypography variant="body2" gutterBottom>
+              By clicking Authorize, Leap, our 3rd party provider, will connect
+              to your ultility company meter and enable Optiwatt to support the
+              grid.
+            </StyledTypography>
+          </Box>
+        )}
+        <Spacer mb={4} />
       </CardContent>
+      <StyledDialog
+        open={openAuthorize}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        maxWidth={"xl"}
+        fullWidth={true}
+      >
+        <StyledDialogContent>
+          <UtilityContainer>
+            <SdgeIcon />
+          </UtilityContainer>
+          <StyledTitleTypography id="alert-dialog-description">
+            SDG&E Utility Webpage / Authorization Flow
+          </StyledTitleTypography>
+          <StyledAllowAuthorizeButton
+            onClick={handleOpenSuccessDialog}
+            variant="contained"
+            autoFocus
+          >
+            Authorize Optiwatt
+          </StyledAllowAuthorizeButton>
+        </StyledDialogContent>
+      </StyledDialog>
+
+      <StyledDialog
+        open={openSuccess}
+        onClose={handleCloseSuccessDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        maxWidth={"xl"}
+        fullWidth={true}
+      >
+        <StyledDialogContent>
+          <LogoIcon />
+          <CheckIcon />
+          <StyledTitleTypography>Optiwatt Success Page</StyledTitleTypography>
+          <StyledSummaryTypography>
+            Successfully linked Optiwatt with SDG&E.
+          </StyledSummaryTypography>
+          <StyledAllowAuthorizeButton
+            onClick={handleCloseSuccessDialog}
+            color="primary"
+            autoFocus
+          >
+            Close Window
+          </StyledAllowAuthorizeButton>
+        </StyledDialogContent>
+      </StyledDialog>
     </Card>
   );
 };
@@ -263,7 +397,7 @@ const SelectUtility = () => {
     <React.Fragment>
       <Helmet title="Alerts" />
       <Typography variant="h3" gutterBottom display="inline">
-        Alerts
+        Select Utility
       </Typography>
 
       <Breadcrumbs aria-label="Breadcrumb" mt={2}>
